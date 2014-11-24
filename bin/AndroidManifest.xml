@@ -9,8 +9,8 @@
         android:targetSdkVersion="19" />
 
     <application
+        android:name="com.melhc.util.MyApplication"
         android:allowBackup="true"
-        android:name="org.litepal.LitePalApplication"  
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >

@@ -3,7 +3,9 @@ package com.melhc.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Province {
+import org.litepal.crud.DataSupport;
+
+public class Province extends DataSupport {
 	private int id;
 	private String province_name;
 	private String province_code;

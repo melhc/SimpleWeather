@@ -1,6 +1,8 @@
 package com.melhc.model;
 
-public class County {
+import org.litepal.crud.DataSupport;
+
+public class County extends DataSupport {
 	private int id;
 	private String county_name;
 	private String county_code;
