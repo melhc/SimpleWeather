@@ -9,6 +9,7 @@ public class Province extends DataSupport {
 	private int id;
 	private String province_name;
 	private String province_code;
+
 	public String getProvince_code() {
 		return province_code;
 	}
@@ -17,10 +18,12 @@ public class Province extends DataSupport {
 		this.province_code = province_code;
 	}
 
+	@SuppressWarnings("unused")
 	private List<City> cities = new ArrayList<City>();
 
 	public List<City> getCities() {
-		return cities;
+		return DataSupport.where("province_id = ?", String.valueOf(id)).find(
+				City.class);
 	}
 
 	public void setCities(List<City> cities) {
@@ -42,7 +45,5 @@ public class Province extends DataSupport {
 	public void setProvince_name(String province_name) {
 		this.province_name = province_name;
 	}
-
-
 
 }

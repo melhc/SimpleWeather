@@ -60,8 +60,9 @@ public class WeatherDB {
 	/*
 	 * 从数据库读取某省下的所有的城市信息
 	 */
-	public List<City> loadCities() {
-		List<City> list = DataSupport.findAll(City.class);
+	public List<City> loadCities(int provinceId) {
+		Province provice = DataSupport.find(Province.class, provinceId);
+		List<City> list = provice.getCities();
 		return list;
 	}
 
@@ -77,13 +78,15 @@ public class WeatherDB {
 	/*
 	 * 从数据库读取某城市下的所有的县信息
 	 */
-	public List<County> loadCounties() {
-		List<County> list = DataSupport.findAll(County.class);
+	public List<County> loadCounties(int cityId) {
+		City city = DataSupport.find(City.class, cityId);
+		List<County> list = city.getCounties();
 		return list;
 	}
-   /*
-    * 关闭数据库
-    */
+
+	/*
+	 * 关闭数据库
+	 */
 	public void destroyDB() {
 		if (db != null) {
 			db.close();
