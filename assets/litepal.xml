@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+
+    <dbname value="weather" >
+    </dbname>
+    <version value="2" >
+    </version>
+
+    <list>
+
+        <mapping class="com.melhc.model.Province" >
+        </mapping>
+
+        <mapping class="com.melhc.model.City" >
+        </mapping>
+
+        <mapping class="com.melhc.model.County" >
+        </mapping>
+    </list>
+
+</litepal>
