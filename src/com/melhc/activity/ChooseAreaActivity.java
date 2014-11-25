@@ -242,7 +242,7 @@ public class ChooseAreaActivity extends BaseActivity {
 	private void showProgressDialog() {
 		if (progressDialog == null) {
 			progressDialog = new ProgressDialog(this);
-			progressDialog.setTitle("简单天气");
+			progressDialog.setTitle("天气云");
 			progressDialog.setMessage("正在加载中....");
 			progressDialog.setCanceledOnTouchOutside(false);
 		}

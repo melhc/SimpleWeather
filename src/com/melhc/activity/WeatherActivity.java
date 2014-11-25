@@ -1,5 +1,6 @@
 package com.melhc.activity;
 
+import com.melhc.service.AutoUpdateService;
 import com.melhc.simpleweather.R;
 import com.melhc.util.HttpCallbackListener;
 import com.melhc.util.HttpUtil;
@@ -194,5 +195,7 @@ public class WeatherActivity extends BaseActivity implements OnClickListener {
 		currentDateText.setText(prefs.getString("current_date", ""));
 		weatherLinearLayout.setVisibility(View.VISIBLE);
 		cityNameText.setVisibility(View.VISIBLE);
+		Intent intent = new Intent(this, AutoUpdateService.class);
+		startService(intent);
 	}
 }
