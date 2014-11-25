@@ -1,19 +1,27 @@
 package com.melhc.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import com.google.gson.Gson;
 import com.melhc.db.WeatherDB;
 import com.melhc.model.City;
 import com.melhc.model.County;
 import com.melhc.model.Province;
+import com.melhc.model.WeatherInfo;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
-
 
 public class Utility {
 	/**
 	 * 处理服务端返回的省级json数据
 	 */
-	public synchronized static boolean handleProvicesResponse(WeatherDB weatherDB,
-			String response) {
+	public synchronized static boolean handleProvicesResponse(
+			WeatherDB weatherDB, String response) {
 		if (!TextUtils.isEmpty(response)) {
 			String[] allProvices = response.split(",");
 			if (allProvices != null && allProvices.length > 0) {
@@ -21,9 +29,9 @@ public class Utility {
 					String[] array = p.split("\\|");
 					Province province = new Province();
 					province.setProvince_code(array[0]);
-					LogUtil.i("UTILITY", "--------------------->"+array[0]);
+					LogUtil.i("UTILITY", "--------------------->" + array[0]);
 					province.setProvince_name(array[1]);
-					LogUtil.i("UTILITY", "--------------------->"+array[1]);
+					LogUtil.i("UTILITY", "--------------------->" + array[1]);
 					weatherDB.saveProvice(province);
 				}
 				return true;
@@ -36,9 +44,9 @@ public class Utility {
 	/**
 	 * 处理服务端返回的市级json数据
 	 */
-	public synchronized static boolean handleCitiesResponse(WeatherDB weatherDB,
-			String response, Province province) {
-		
+	public synchronized static boolean handleCitiesResponse(
+			WeatherDB weatherDB, String response, Province province) {
+
 		if (!TextUtils.isEmpty(response)) {
 			String[] allCities = response.split(",");
 			if (allCities != null && allCities.length > 0) {
@@ -49,10 +57,10 @@ public class Utility {
 					city.setCity_name(array[1]);
 					weatherDB.saveCity(city);
 					province.getCities().add(city);
-//					province.updateAll("province_code = ? ",
-//							String.valueOf(i));
+					// province.updateAll("province_code = ? ",
+					// String.valueOf(i));
 					province.save();
-					
+
 				}
 				return true;
 			}
@@ -63,8 +71,8 @@ public class Utility {
 	/**
 	 * 处理服务端返回的县级json数据
 	 */
-	public synchronized static boolean handleCountiesResponse(WeatherDB weatherDB,
-			String response, City city) {
+	public synchronized static boolean handleCountiesResponse(
+			WeatherDB weatherDB, String response, City city) {
 		if (!TextUtils.isEmpty(response)) {
 			String[] allCounties = response.split(",");
 			if (allCounties != null && allCounties.length > 0) {
@@ -75,7 +83,7 @@ public class Utility {
 					county.setCounty_name(array[1]);
 					weatherDB.saveCounty(county);
 					city.getCounties().add(county);
-//					city.updateAll("city_code = ? ", city.getCity_code());
+					// city.updateAll("city_code = ? ", city.getCity_code());
 					city.save();
 				}
 				return true;
@@ -84,4 +92,35 @@ public class Utility {
 		return false;
 	}
 
+	/**
+	 * 使用Gson解析服务器返回的JSON数据，并将解析的数据存储到本地
+	 */
+	public static void handleWeatherResponse(Context context, String response) {
+		try {
+			Gson gson = new Gson();
+			WeatherInfo info = gson.fromJson(response, WeatherInfo.class);
+			saveWeatherInfo(context, info);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	/**
+	 * 将服务器返回的天气信息存储到共享参数中
+	 */
+	public static void saveWeatherInfo(Context context, WeatherInfo info) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年m月d日", Locale.CHINA);
+		SharedPreferences.Editor editor = PreferenceManager
+				.getDefaultSharedPreferences(context).edit();
+		editor.putBoolean("city_selected", true);
+		editor.putString("city_name", info.getCityName());
+		editor.putString("weather_code", info.getWeatherCode());
+		editor.putString("temp1", info.getTemp1());
+		editor.putString("temp2", info.getTemp2());
+		editor.putString("weather_desp", info.getWeatherDesp());
+		editor.putString("publish_time", info.getPublishTime());
+		editor.putString("current_date", sdf.format(new Date()));
+		editor.commit();
+	}
 }
