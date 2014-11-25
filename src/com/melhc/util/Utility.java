@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+
 import com.google.gson.Gson;
 import com.melhc.db.WeatherDB;
 import com.melhc.model.City;
@@ -56,12 +57,8 @@ public class Utility {
 					City city = new City();
 					city.setCity_code(array[0]);
 					city.setCity_name(array[1]);
+					city.setProvince(province);
 					weatherDB.saveCity(city);
-					province.getCities().add(city);
-					// province.updateAll("province_code = ? ",
-					// String.valueOf(i));
-					province.save();
-
 				}
 				return true;
 			}
@@ -82,10 +79,8 @@ public class Utility {
 					County county = new County();
 					county.setCounty_code(array[0]);
 					county.setCounty_name(array[1]);
+					county.setCity(city);
 					weatherDB.saveCounty(county);
-					city.getCounties().add(county);
-					// city.updateAll("city_code = ? ", city.getCity_code());
-					city.save();
 				}
 				return true;
 			}

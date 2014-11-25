@@ -1,5 +1,7 @@
 package com.melhc.model;
 
+
+
 public class Weatherinfo {
    private String city;
    private String cityid;

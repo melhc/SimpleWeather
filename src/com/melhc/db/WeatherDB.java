@@ -8,7 +8,6 @@ import org.litepal.tablemanager.Connector;
 import com.melhc.model.City;
 import com.melhc.model.County;
 import com.melhc.model.Province;
-import com.melhc.util.LogUtil;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -63,7 +62,6 @@ public class WeatherDB {
 	 */
 	public List<City> loadCities(int provinceId) {
 		Province provice = DataSupport.find(Province.class, provinceId,true);
-		LogUtil.i("WeatherDB", "------------------->"+provice.getCities().toString());
 		List<City> list = provice.getCities();
 
 		return list;

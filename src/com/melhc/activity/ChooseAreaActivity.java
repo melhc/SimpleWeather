@@ -51,13 +51,20 @@ public class ChooseAreaActivity extends BaseActivity {
 
 	private int currentLevel;
 
+	/**
+	 * 判断是否从WeatherActivity跳转过来
+	 */
+	private boolean isFromWeatherActivity;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		isFromWeatherActivity = getIntent().getBooleanExtra(
+				"from_weather_activity", false);
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
-		if (prefs.getBoolean("city_selected", false)) {
+		if (prefs.getBoolean("city_selected", false) && !isFromWeatherActivity) {
 			Intent intent = new Intent(this, WeatherActivity.class);
 			startActivity(intent);
 			finish();
@@ -256,11 +263,18 @@ public class ChooseAreaActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
 		if (currentLevel == LEVEL_COUNTY) {
+			LogUtil.i("CHOOSEAREAACTIVITY", "------------->1");
 			queryCities();
+			LogUtil.i("CHOOSEAREAACTIVITY", "------------->2");
 		} else if (currentLevel == LEVEL_CITY) {
 			queryProvinces();
 		} else {
+			if (isFromWeatherActivity) {
+				Intent intent = new Intent(this, WeatherActivity.class);
+				startActivity(intent);
+			}
 			finish();
+			LogUtil.i("CHOOSEAREAACTIVITY", "------------->3");
 		}
 	}
 
@@ -268,6 +282,6 @@ public class ChooseAreaActivity extends BaseActivity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-//		weatherDB.destroyDB();
+		// weatherDB.destroyDB();
 	}
 }
