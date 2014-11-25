@@ -10,12 +10,13 @@ public class City extends DataSupport {
 	private String city_name;
 	private String city_code;
 	private Province province;
-	@SuppressWarnings("unused")
+	
 	private List<County> counties = new ArrayList<County>();
 
 	public List<County> getCounties() {
-		return DataSupport.where("city_id = ?", String.valueOf(id)).find(
-				County.class);
+//		return DataSupport.where("city_id = ?", String.valueOf(id)).find(
+//				County.class);
+		return counties;
 	}
 
 	public void setCounties(List<County> counties) {

@@ -18,12 +18,14 @@ public class Province extends DataSupport {
 		this.province_code = province_code;
 	}
 
+	
 	private List<City> cities = new ArrayList<City>();
 
 	public List<City> getCities() {
+
+//		return DataSupport.where("province_id = ?", String.valueOf(id)).find(
+//				City.class);
 		return cities;
-		// return DataSupport.where("province_id = ?", String.valueOf(id)).find(
-		// City.class);
 	}
 
 	public void setCities(List<City> cities) {

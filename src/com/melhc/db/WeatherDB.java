@@ -13,7 +13,7 @@ import com.melhc.util.LogUtil;
 import android.database.sqlite.SQLiteDatabase;
 
 public class WeatherDB {
-	/*
+	/**
 	 * 一些基本的数据库方法封装
 	 */
 	private SQLiteDatabase db;
@@ -32,7 +32,7 @@ public class WeatherDB {
 		return weatherDB;
 	}
 
-	/*
+	/**
 	 * 将provice实例存储到数据库
 	 */
 	public void saveProvice(Province province) {
@@ -41,7 +41,7 @@ public class WeatherDB {
 		}
 	}
 
-	/*
+	/**
 	 * 从数据库读取全国所有的省份信息
 	 */
 	public List<Province> loadProvices() {
@@ -49,7 +49,7 @@ public class WeatherDB {
 		return list;
 	}
 
-	/*
+	/**
 	 * 将city实例存储到数据库
 	 */
 	public void saveCity(City city) {
@@ -58,7 +58,7 @@ public class WeatherDB {
 		}
 	}
 
-	/*
+	/**
 	 * 从数据库读取某省下的所有的城市信息
 	 */
 	public List<City> loadCities(int provinceId) {
@@ -69,7 +69,7 @@ public class WeatherDB {
 		return list;
 	}
 
-	/*
+	/**
 	 * 将county实例存储到数据库
 	 */
 	public void saveCounty(County county) {
@@ -78,16 +78,16 @@ public class WeatherDB {
 		}
 	}
 
-	/*
+	/**
 	 * 从数据库读取某城市下的所有的县信息
 	 */
 	public List<County> loadCounties(int cityId) {
-		City city = DataSupport.find(City.class, cityId);
+		City city = DataSupport.find(City.class, cityId,true);
 		List<County> list = city.getCounties();
 		return list;
 	}
 
-	/*
+	/**
 	 * 关闭数据库
 	 */
 	public void destroyDB() {

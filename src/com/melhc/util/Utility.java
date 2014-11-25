@@ -38,7 +38,7 @@ public class Utility {
 	 */
 	public synchronized static boolean handleCitiesResponse(WeatherDB weatherDB,
 			String response, Province province) {
-		int i=province.getId();
+		
 		if (!TextUtils.isEmpty(response)) {
 			String[] allCities = response.split(",");
 			if (allCities != null && allCities.length > 0) {
@@ -49,8 +49,10 @@ public class Utility {
 					city.setCity_name(array[1]);
 					weatherDB.saveCity(city);
 					province.getCities().add(city);
-					province.updateAll("province_code = ? ",
-							String.valueOf(i));
+//					province.updateAll("province_code = ? ",
+//							String.valueOf(i));
+					province.save();
+					
 				}
 				return true;
 			}
@@ -73,7 +75,8 @@ public class Utility {
 					county.setCounty_name(array[1]);
 					weatherDB.saveCounty(county);
 					city.getCounties().add(county);
-					city.updateAll("city_code = ? ", city.getCity_code());
+//					city.updateAll("city_code = ? ", city.getCity_code());
+					city.save();
 				}
 				return true;
 			}
