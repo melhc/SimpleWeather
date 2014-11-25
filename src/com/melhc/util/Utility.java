@@ -9,7 +9,8 @@ import com.melhc.db.WeatherDB;
 import com.melhc.model.City;
 import com.melhc.model.County;
 import com.melhc.model.Province;
-import com.melhc.model.WeatherInfo;
+import com.melhc.model.Weather;
+import com.melhc.model.Weatherinfo;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -97,8 +98,12 @@ public class Utility {
 	 */
 	public static void handleWeatherResponse(Context context, String response) {
 		try {
+			LogUtil.i("UTILITY", "----------------->" + response.toString());
 			Gson gson = new Gson();
-			WeatherInfo info = gson.fromJson(response, WeatherInfo.class);
+			Weather weather = gson.fromJson(response, Weather.class);
+			LogUtil.i("UTILITY", "----------------->" + weather.toString());
+			Weatherinfo info = weather.getWeatherinfo();
+			LogUtil.i("UTILITY", "----------------->" + info.toString());
 			saveWeatherInfo(context, info);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -108,18 +113,19 @@ public class Utility {
 	/**
 	 * 将服务器返回的天气信息存储到共享参数中
 	 */
-	public static void saveWeatherInfo(Context context, WeatherInfo info) {
+	public static void saveWeatherInfo(Context context, Weatherinfo info) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年m月d日", Locale.CHINA);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
 		SharedPreferences.Editor editor = PreferenceManager
 				.getDefaultSharedPreferences(context).edit();
 		editor.putBoolean("city_selected", true);
-		editor.putString("city_name", info.getCityName());
-		editor.putString("weather_code", info.getWeatherCode());
+		editor.putString("city_name", info.getCity());
+		editor.putString("weather_code", info.getCityid());
 		editor.putString("temp1", info.getTemp1());
 		editor.putString("temp2", info.getTemp2());
-		editor.putString("weather_desp", info.getWeatherDesp());
-		editor.putString("publish_time", info.getPublishTime());
+		editor.putString("weather_desp", info.getWeather());
+		editor.putString("publish_time", info.getPtime());
+		LogUtil.i("UTILITY", "----------------->" +  sdf.format(new Date()));
 		editor.putString("current_date", sdf.format(new Date()));
 		editor.commit();
 	}

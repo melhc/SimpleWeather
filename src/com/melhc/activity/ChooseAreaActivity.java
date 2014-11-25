@@ -14,7 +14,10 @@ import com.melhc.util.LogUtil;
 import com.melhc.util.Utility;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -52,12 +55,20 @@ public class ChooseAreaActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		if (prefs.getBoolean("city_selected", false)) {
+			Intent intent = new Intent(this, WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView = (ListView) findViewById(R.id.list_view);
 		textView = (TextView) findViewById(R.id.title_text);
 		adapter = new ArrayAdapter<String>(getApplicationContext(),
-				android.R.layout.simple_list_item_1, dataList);
+				R.layout.choose_area_item, R.id.textView1, dataList);
 		listView.setAdapter(adapter);
 		weatherDB = WeatherDB.getInstance();
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -72,6 +83,14 @@ public class ChooseAreaActivity extends BaseActivity {
 				} else if (currentLevel == LEVEL_CITY) {
 					selectedCity = cityList.get(position);
 					queryCounties();
+				} else if (currentLevel == LEVEL_COUNTY) {
+					String countyCode = countyList.get(position)
+							.getCounty_code();
+					Intent intent = new Intent(ChooseAreaActivity.this,
+							WeatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
 
@@ -89,7 +108,8 @@ public class ChooseAreaActivity extends BaseActivity {
 			for (Province province : proviceList) {
 				dataList.add(province.getProvince_name());
 			}
-			LogUtil.i("ChooseActivity", "--------------->"+dataList.toString());
+			LogUtil.i("ChooseActivity",
+					"--------------->" + dataList.toString());
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
 			textView.setText("中国");
@@ -104,13 +124,14 @@ public class ChooseAreaActivity extends BaseActivity {
 	 */
 	private void queryCities() {
 		cityList = weatherDB.loadCities(selectedProvince.getId());
-		LogUtil.i("ChooseActivity", "--------------->"+cityList.toString());
+		LogUtil.i("ChooseActivity", "--------------->" + cityList.toString());
 		if (cityList.size() > 0) {
 			dataList.clear();
 			for (City city : cityList) {
 				dataList.add(city.getCity_name());
 			}
-			LogUtil.i("ChooseActivity", "--------------->"+dataList.toString());
+			LogUtil.i("ChooseActivity",
+					"--------------->" + dataList.toString());
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
 			textView.setText(selectedProvince.getProvince_name());
@@ -192,7 +213,7 @@ public class ChooseAreaActivity extends BaseActivity {
 			@Override
 			public void onError(Exception e) {
 				// TODO Auto-generated method stub
-				LogUtil.i("TAG", "-------------------->"+e);
+				LogUtil.i("TAG", "-------------------->" + e);
 				runOnUiThread(new Runnable() {
 
 					@Override
@@ -200,7 +221,7 @@ public class ChooseAreaActivity extends BaseActivity {
 						// TODO Auto-generated method stub
 						// closeProgressDialog();
 						Toast.makeText(getApplicationContext(), "加载数据失败！",
-								Toast.LENGTH_SHORT).show();	
+								Toast.LENGTH_SHORT).show();
 					}
 				});
 			}
@@ -247,6 +268,6 @@ public class ChooseAreaActivity extends BaseActivity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		weatherDB.destroyDB();
+//		weatherDB.destroyDB();
 	}
 }
