@@ -8,7 +8,10 @@ import org.litepal.crud.DataSupport;
 public class Province extends DataSupport {
 	private int id;
 	private String province_name;
+
 	private String province_code;
+
+	private List<City> cities = new ArrayList<City>();
 
 	public String getProvince_code() {
 		return province_code;
@@ -18,13 +21,8 @@ public class Province extends DataSupport {
 		this.province_code = province_code;
 	}
 
-	
-	private List<City> cities = new ArrayList<City>();
-
 	public List<City> getCities() {
 
-//		return DataSupport.where("province_id = ?", String.valueOf(id)).find(
-//				City.class);
 		return cities;
 	}
 

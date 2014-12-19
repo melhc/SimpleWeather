@@ -14,8 +14,7 @@ public class City extends DataSupport {
 	private List<County> counties = new ArrayList<County>();
 
 	public List<County> getCounties() {
-//		return DataSupport.where("city_id = ?", String.valueOf(id)).find(
-//				County.class);
+
 		return counties;
 	}
 

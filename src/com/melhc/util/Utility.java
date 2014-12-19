@@ -31,9 +31,9 @@ public class Utility {
 					String[] array = p.split("\\|");
 					Province province = new Province();
 					province.setProvince_code(array[0]);
-					LogUtil.i("UTILITY", "--------------------->" + array[0]);
+					
 					province.setProvince_name(array[1]);
-					LogUtil.i("UTILITY", "--------------------->" + array[1]);
+				
 					weatherDB.saveProvice(province);
 				}
 				return true;

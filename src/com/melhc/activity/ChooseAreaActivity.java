@@ -3,13 +3,16 @@ package com.melhc.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.melhc.db.WeatherDB;
 import com.melhc.model.City;
 import com.melhc.model.County;
 import com.melhc.model.Province;
 import com.melhc.simpleweather.R;
-import com.melhc.util.HttpCallbackListener;
-import com.melhc.util.HttpUtil;
 import com.melhc.util.LogUtil;
 import com.melhc.util.Utility;
 
@@ -181,59 +184,57 @@ public class ChooseAreaActivity extends BaseActivity {
 			address = "http://www.weather.com.cn/data/list3/city.xml";
 		}
 		showProgressDialog();
-		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
-
-			@Override
-			public void onFinish(String response) {
-				// TODO Auto-generated method stub
-				boolean result = false;
-				if ("province".equals(type)) {
-					result = Utility
-							.handleProvicesResponse(weatherDB, response);
-				} else if ("city".equals(type)) {
-					result = Utility.handleCitiesResponse(weatherDB, response,
-							selectedProvince);
-				} else if ("county".equals(type)) {
-					result = Utility.handleCountiesResponse(weatherDB,
-							response, selectedCity);
-				}
-				if (result) {
-					// 通过runonUiMainThread方法返回主线程处理逻辑
-					runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							closeProgressDialog();
-							if ("province".equals(type)) {
-								queryProvinces();
-							} else if ("city".equals(type)) {
-								queryCities();
-							} else if ("county".equals(type)) {
-								queryCounties();
-							}
-						}
-					});
-				}
-			}
-
-			@Override
-			public void onError(Exception e) {
-				// TODO Auto-generated method stub
-				LogUtil.i("TAG", "-------------------->" + e);
-				runOnUiThread(new Runnable() {
-
+		RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
+		StringRequest stringRequest = new StringRequest(address,
+				new Response.Listener<String>() {
 					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						// closeProgressDialog();
-						Toast.makeText(getApplicationContext(), "加载数据失败！",
-								Toast.LENGTH_SHORT).show();
+					public void onResponse(String response) {
+						LogUtil.i("TAG", "---------------->"+response);
+						boolean result = false;
+						if ("province".equals(type)) {
+							result = Utility.handleProvicesResponse(weatherDB,
+									response);
+						} else if ("city".equals(type)) {
+							result = Utility.handleCitiesResponse(weatherDB,
+									response, selectedProvince);
+						} else if ("county".equals(type)) {
+							result = Utility.handleCountiesResponse(weatherDB,
+									response, selectedCity);
+						}
+						if (result) {
+							// 通过runonUiMainThread方法返回主线程处理逻辑
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									closeProgressDialog();
+									if ("province".equals(type)) {
+										queryProvinces();
+									} else if ("city".equals(type)) {
+										queryCities();
+									} else if ("county".equals(type)) {
+										queryCounties();
+									}
+								}
+							});
+						}
+					}
+				}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						LogUtil.i("TAG", "-------------------->" + error);
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() { // TODO Auto-generated method
+												// stub //
+								closeProgressDialog();
+								Toast.makeText(getApplicationContext(),
+										"加载数据失败！", Toast.LENGTH_SHORT).show();
+							}
+						});
 					}
 				});
-			}
-		});
-
+		mQueue.add(stringRequest);
 	}
 
 	/**

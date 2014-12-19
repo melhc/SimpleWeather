@@ -15,7 +15,7 @@ public class LogUtil {
 
 	public static final int NOTHING = 6;
 
-	public static final int LEVEAL = NOTHING;
+	public static final int LEVEAL = VERBOSE;
 
 	public static void v(String tag, String msg) {
 		if (LEVEAL <= VERBOSE) {

@@ -21,7 +21,7 @@ public class WeatherDB {
 
 	public WeatherDB() {
 		// TODO Auto-generated constructor stub
-		db = Connector.getDatabase();
+		db = Connector.getDatabase();//正式生成数据库
 	}
 
 	public synchronized static WeatherDB getInstance() {
