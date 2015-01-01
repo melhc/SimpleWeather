@@ -1,9 +1,12 @@
 package com.melhc.activity;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.melhc.service.AutoUpdateService;
 import com.melhc.simpleweather.R;
-import com.melhc.util.HttpCallbackListener;
-import com.melhc.util.HttpUtil;
 import com.melhc.util.LogUtil;
 import com.melhc.util.Utility;
 
@@ -129,6 +132,7 @@ public class WeatherActivity extends BaseActivity implements OnClickListener {
 	private void queryWeatherInfo(String weatherCode) {
 		String address = "http://www.weather.com.cn/data/cityinfo/"
 				+ weatherCode + ".html";
+		LogUtil.i("TAG", "------------------->" + address);
 		queryFromServer(address, "weatherCode");
 	}
 
@@ -136,49 +140,52 @@ public class WeatherActivity extends BaseActivity implements OnClickListener {
 	 * 根据传入的地址及类型去服务器端获取数据
 	 */
 	private void queryFromServer(final String address, final String type) {
-		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
-
-			@Override
-			public void onFinish(final String response) {
-				// TODO Auto-generated method stub
-				if ("countyCode".equals(type)) {
-					if (!TextUtils.isEmpty(response)) {
-						String[] array = response.split("\\|");
-						if (array != null && array.length == 2) {
-							String weatherCode = array[1];
-							LogUtil.i("WeatherActivity", "-------------->"
-									+ weatherCode);
-							queryWeatherInfo(weatherCode);
-						}
-					}
-				} else if ("weatherCode".equals(type)) {
-					// 处理服务器返回的天气信息
-					Utility.handleWeatherResponse(getApplicationContext(),
-							response);
-					runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							showWeather();
-						}
-					});
-				}
-			}
-
-			@Override
-			public void onError(Exception e) {
-				// TODO Auto-generated method stub
-				runOnUiThread(new Runnable() {
-
+		RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
+		StringRequest stringRequest = new StringRequest(address,
+				new Response.Listener<String>() {
 					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						publishText.setText("同步失败");
+					public void onResponse(String response) {
+						if ("countyCode".equals(type)) {
+							if (!TextUtils.isEmpty(response)) {
+								String[] array = response.split("\\|");
+								if (array != null && array.length == 2) {
+									String weatherCode = array[1];
+									LogUtil.i("WeatherActivity",
+											"-------------->" + weatherCode);
+									queryWeatherInfo(weatherCode);
+								}
+							}
+						} else if ("weatherCode".equals(type)) {
+							// 处理服务器返回的天气信息
+							Utility.handleWeatherResponse(
+									getApplicationContext(), response);
+							runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									showWeather();
+								}
+							});
+						}
+
+					}
+				}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								publishText.setText("同步失败");
+							}
+						});
+
 					}
 				});
-			}
-		});
+		mQueue.add(stringRequest);
+
 	}
 
 	/**

@@ -1,8 +1,12 @@
 package com.melhc.service;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.melhc.reciever.AutoUpdateReceiver;
-import com.melhc.util.HttpCallbackListener;
-import com.melhc.util.HttpUtil;
+import com.melhc.util.LogUtil;
 import com.melhc.util.Utility;
 
 import android.app.AlarmManager;
@@ -52,20 +56,23 @@ public class AutoUpdateService extends Service {
 		String weather_code = prefs.getString("weather_code", "");
 		String address = "http:www.weather.com.cn/data/cityinfo/"
 				+ weather_code + ".html";
-		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+		RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
+		StringRequest stringRequest = new StringRequest(address,
+				new Response.Listener<String>() {
+					@Override
+					public void onResponse(String response) {
+						Utility.handleWeatherResponse(getApplicationContext(),
+								response);
 
-			@Override
-			public void onFinish(String response) {
-				// TODO Auto-generated method stub
-				Utility.handleWeatherResponse(getApplicationContext(), response);
-			}
+					}
+				}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						LogUtil.i("TAG", "-------------------->" + error);
 
-			@Override
-			public void onError(Exception e) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+					}
+				});
+		mQueue.add(stringRequest);
 	}
 
 }
